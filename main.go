@@ -4,8 +4,10 @@ import (
 	_ "embed"
 	"fmt"
 	"html/template"
+	"io"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -14,6 +16,7 @@ var pageHTML string
 
 type PageData struct {
 	Request *http.Request
+	Environ []string
 }
 
 func hello(w http.ResponseWriter, req *http.Request) {
@@ -24,13 +27,24 @@ func hello(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-
 	w.Header().Set("content-type", "text/html; charset=utf-8")
 
+	f, err := os.Open("/env.txt")
+	if err != nil {
+		log.Printf("failed to open: %s", err)
+		return
+	}
+	defer f.Close()
+	_, err = io.Copy(w, f)
+	if err != nil {
+		log.Printf("failed to open: %s", err)
+		return
+	}
 
-	data := PageData {
+	data := PageData{
 		Request: req,
-	}	
+		Environ: os.Environ(),
+	}
 	err = t.Execute(w, &data)
 	if err != nil {
 		log.Printf("failed to execute: %s", err)

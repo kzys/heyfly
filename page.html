@@ -4,11 +4,21 @@
     <title></title>
   </head>
   <body>
+    <h1>Request Header</h1>
     <table>
       {{ range $k, $v := .Request.Header }}
       <tr>
 	<td>{{ $k }}</td>
 	<td>{{ $v }}</td>
+      </tr>
+      {{ end }}
+    </table>
+
+    <h1>Environment Variables</h1>
+    <table>
+      {{ range $kv := .Environ }}
+      <tr>
+	<td>{{ $kv }}</td>
       </tr>
       {{ end }}
     </table>
